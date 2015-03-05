@@ -7,6 +7,14 @@ app.factory('Auth', ['FURL', '$firebaseAuth', '$firebase',function (FURL, $fireb
     var Auth = {
 
         user: {},
+        
+/*        createProfile: function(uid, user) {
+            var profile = {
+                name: user.name,
+                email: user.email,
+                gravatar: get_gravatar(user.email, 40);
+            }
+        },*/
 
         login: function (user) {
             return auth.$authWithPassword({
