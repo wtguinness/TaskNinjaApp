@@ -1,6 +1,6 @@
 'use strict';
 
-var app = angular.module('TaskNinjaApp', ['firebase', 'ngRoute','ngResource','ngAnimate'])
+var app = angular.module('TaskNinjaApp', ['firebase', 'ngRoute','ngResource','ngAnimate', 'toaster'])
     .constant('FURL', 'https://blistering-heat-9707.firebaseio.com/')
     .config(function ($routeProvider){
         $routeProvider

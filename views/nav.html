@@ -19,6 +19,9 @@
                 <li ng-hide="signedIn()"><a href="#/register">Register</a></li>
                 <li ng-show="signedIn()" class="dropdown">
                     <a href="" class="dropdown-toggle" data-toggle="dropdown">
+                        <img ng-src="{{currentUser.profile.gravatar}}" class="img-circle gravatar">
+                        &nbsp;
+                        {{currentUser.profile.name}}
                     <span class="mdi-navigation-expand-more"></span></a>
                     <ul class="dropdown-menu">
                         <li><a href="" data-toggle="modal" data-target="#pasModal">
