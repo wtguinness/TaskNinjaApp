@@ -1,6 +1,11 @@
 'use strict';
 
 app.controller('AuthController', ['$scope', '$location', 'Auth', 'toaster', function ($scope, $location, Auth, toaster) {
+    
+    if(Auth.signedIn()){
+        $location.path('/');
+    }
+    
     $scope.register = function (user) {
         Auth.register(user).then(function () {
             toaster.pop('success', 'Registered successfully!');
