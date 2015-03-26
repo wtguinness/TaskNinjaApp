@@ -40,6 +40,19 @@ app.factory('Task', ['FURL', '$firebase', 'Auth', function (FURL, $firebase, Aut
             
         isOpen: function (task) {
           return task.status === "open";
+        },
+
+        completeTask: function(taskId){
+            var t = this.getTask(taskId);
+            t.$update({status: "completed"});
+        },
+
+        isAssignee: function(task){
+            return (user && user.provider && user.uid === task.runner);
+        },
+
+        isCompleted: function(task){
+            return task.status === "completed";
         }
 
     };

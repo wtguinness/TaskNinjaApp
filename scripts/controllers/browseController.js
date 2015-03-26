@@ -35,6 +35,10 @@ app.controller('BrowseController', ['$scope', '$routeParams', 'toaster', 'Task',
         $scope.block = false;
 
         $scope.isOfferMaker = Offer.isMaker;
+
+        $scope.isAssignee = Task.isAssignee;
+
+        $scope.isCompleted = Task.isCompleted;
     };
     $scope.cancelTask = function (taskId) {
         Task.cancelTask(taskId).then(function () {
@@ -43,19 +47,19 @@ app.controller('BrowseController', ['$scope', '$routeParams', 'toaster', 'Task',
 
     };
 
-    $scope.addComment = function(){
+    $scope.addComment = function() {
         var comment = {
             content: $scope.content,
             name: $scope.user.profile.name,
             gravatar: $scope.user.profile.gravatar
         };
 
-        Comment.addComment($scope.selectedTask.$id, comment).then(function(){
+        Comment.addComment($scope.selectedTask.$id, comment).then(function() {
             $scope.content = '';
         });
     };
 
-    $scope.makeOffer = function(){
+    $scope.makeOffer = function() {
         var offer = {
             total: $scope.total,
             uid: $scope.user.uid,
@@ -63,7 +67,7 @@ app.controller('BrowseController', ['$scope', '$routeParams', 'toaster', 'Task',
             gravatar: $scope.user.profile.gravatar
         };
 
-        Offer.makeOffer($scope.selectedTask.$id, offer).then(function(){
+        Offer.makeOffer($scope.selectedTask.$id, offer).then(function() {
             toaster.pop('success', 'Your offer had been placed!');
             $scope.total = '';
             $scope.block = true;
@@ -72,12 +76,24 @@ app.controller('BrowseController', ['$scope', '$routeParams', 'toaster', 'Task',
     };
 
     $scope.cancelOffer = function(offerId){
-        Offer.cancelOffer($scope.selectedTask.$id, offerId).then(function(){
+        Offer.cancelOffer($scope.selectedTask.$id, offerId).then(function() {
             toaster.pop('success', 'Your offer has been cancelled!');
 
             $scope.alreadyOffered = false;
             $scope.block = false;
         });
     };
+    $scope.acceptOffer = function(offerId, runnerId){
+        Offer.acceptOffer($scope.selectedTask.$id, offerId,runnerId).then(function() {
+            toaster.pop('success', 'Offer is accepted!');
+        });
+    };
+
+    $scope.completeTask = function(taskId){
+        Task.completeTask(taskId).then(function () {
+            toaster.pop('success', 'Congratulations!  You have completed the task.');
+        });
+    };
+
 
 }]);
