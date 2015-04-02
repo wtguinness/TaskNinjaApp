@@ -53,6 +53,10 @@ app.factory('Auth', ['FURL', '$firebaseAuth', '$firebase', function (FURL, $fire
 
         signedIn: function () {
             return !!Auth.user.provider;
+        },
+
+        requireAuth: function () {
+            return auth.$requireAuth();
         }
     };
 

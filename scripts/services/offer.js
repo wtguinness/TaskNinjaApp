@@ -1,62 +1,72 @@
 'use strict';
 
-app.factory('Offer', ['FURL','$firebase', '$q', 'Auth', 'Task', function(FURL, $firebase, $q, Auth, Task){
-	
-	var ref = new Firebase(FURL);
-	var user = Auth.user;
+app.factory('Offer', ['FURL', '$firebase', '$q', 'Auth', 'Task',
+    function(FURL, $firebase, $q, Auth, Task) {
 
-	var Offer = {
+        var ref = new Firebase(FURL);
+        var user = Auth.user;
 
-		offers: function(taskId){
-			return $firebase(ref.child('offers').child(taskId)).$asArray();
-		},
+        var Offer = {
 
-		makeOffer: function(taskId, offer){
-			var task_offers = this.offers(taskId);
+            offers: function(taskId) {
+                return $firebase(ref.child('offers').child(taskId)).$asArray();
+            },
 
-			if(task_offers){
-				return task_offers.$add(offer);
-			}
-		},
-	
+            makeOffer: function(taskId, offer) {
+                var task_offers = this.offers(taskId);
 
-		isOffered: function(taskId){
-			if(user && user.provider){
-				var d = $q.defer();
+                if (task_offers) {
+                    return task_offers.$add(offer);
+                }
+            },
 
-				$firebase(ref.child('offers').child(taskId).orderByChild("uid")
-					.equalTo(user.uid))
-					.$asArray()
-					.$loaded().then(function(data) {
-						d.resolve(data.length > 0);
-					}, function() {
-						d.reject(false);
-					});
-					return d.promise;
-			}
-		},
 
-		isMaker: function(offer){
-			return (user && user.provider && user.uid === offer.uid);
-		},
+            isOffered: function(taskId) {
+                if (user && user.provider) {
+                    var d = $q.defer();
 
-		getOffer: function(taskId, offerId){
-			return $firebase(ref.child('offers').child(taskId).child(offerId));
-		},
+                    $firebase(ref.child('offers').child(taskId).orderByChild("uid")
+                        .equalTo(user.uid))
+                        .$asArray()
+                        .$loaded().then(function(data) {
+                            d.resolve(data.length > 0);
+                        }, function() {
+                            d.reject(false);
+                        });
+                    return d.promise;
+                }
+            },
 
-		cancelOffer: function(taskId, offerId){
-			return this.getOffer(taskId, offerId).$remove();
-		},
+            isMaker: function(offer) {
+                return (user && user.provider && user.uid === offer.uid);
+            },
 
-		acceptOffer: function(taskId, offerId, runnerId){
-			var o = this.getOffer(taskId, offerId);
-			return o.$update({accepted: true}).then(function(){
-			var t = Task.getTask(taskId);
-			return t.$update({status: "assigned", runner: runnerId});
-			});
+            getOffer: function(taskId, offerId) {
+                return $firebase(ref.child('offers').child(taskId).child(offerId));
+            },
 
-		}
-	};
+            cancelOffer: function(taskId, offerId) {
+                return this.getOffer(taskId, offerId).$remove();
+            },
 
-	return Offer;
-}]);
+            acceptOffer: function(taskId, offerId, runnerId) {
+                var o = this.getOffer(taskId, offerId);
+                return o.$update({
+                        accepted: true
+                    }).then(function() {
+                        var t = Task.getTask(taskId);
+                        return t.$update({
+                            status: "assigned",
+                            runner: runnerId
+                        });
+                    })
+                    .then(function() {
+                    	return Task.createUserTasks(taskId);
+                    });
+
+            }
+        };
+
+        return Offer;
+    }
+]);
